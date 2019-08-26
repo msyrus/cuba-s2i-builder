@@ -11,12 +11,17 @@ LABEL io.k8s.description="Platform for building cuba uberJar" \
      io.openshift.expose-services="8080:http" \
      io.openshift.tags="builder,cuba,gradle"
 
-RUN yum install -y java-1.8.0-openjdk gradle && yum clean all -y
+RUN yum install -y java-1.8.0-openjdk unzip && yum clean all -y
+ADD https://services.gradle.org/distributions/gradle-5.6-bin.zip /opt/gradle/gradle.zip
+RUN unzip -d /opt/gradle /opt/gradle/gradle.zip \
+     && rm /opt/gradle/gradle.zip
+
+ENV PATH $PATH:/opt/gradle/gradle-5.6/bin
 
 # TODO (optional): Copy the builder files into /opt/app-root
 # COPY ./<builder_folder>/ /opt/app-root/
 
-# TODO: Copy the S2I scripts to /usr/libexec/s2i, since openshift/base-centos7 image
+# since openshift/base-centos7 image
 # sets io.openshift.s2i.scripts-url label that way, or update that label
 COPY ./s2i/bin/ /usr/libexec/s2i
 
