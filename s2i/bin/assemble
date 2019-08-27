@@ -23,6 +23,42 @@ echo "---> Installing application source..."
 cp -Rf /tmp/src/. ./
 
 echo "---> Building application from source..."
+
+if ! [ -z "${DB_HOST}"]; then
+    sed -i "s/\(host = \).*/\1'$DB_HOST'/g" ./build.gradle
+fi
+
+if ! [ -z "${DB_NAME}"]; then
+    echo "Setting dbName to $DB_NAME"
+    sed -i "s/\(dbName = \).*/\1'$DB_NAME'/g" ./build.gradle
+fi
+
+if ! [ -z "${DB_USER}"]; then
+    sed -i "s/\(dbUser = \).*/\1'$DB_USER'/g" ./build.gradle
+    sed -i "s/\(username=\).*\"/\1\"$DB_USER\"/g" ./modules/core/web/META-INF/context.xml
+    sed -i "s/\(username\">\).*</\1$DB_USER</g" ./modules/core/web/META-INF/jetty-env.xml
+fi
+
+if ! [ -z "${DB_PASS}"]; then
+    sed -i "s/\(dbPassword = \).*/\1'$DB_PASS'/g" ./build.gradle
+    sed -i "s/\(password=\).*\"/\1\"$DB_PASS\"/g" ./modules/core/web/META-INF/context.xml
+    sed -i "s/\(password\">\).*</\1$DB_PASS</g" ./modules/core/web/META-INF/jetty-env.xml
+fi
+
+if ! [ -z "${DB_SYS_USER}"]; then
+    sed -i "s/\(oracleSystemUser = \).*/\1'$DB_SYS_USER'/g" ./build.gradle
+fi
+
+if ! [ -z "${DB_SYS_PASS}"]; then
+    sed -i "s/\(oracleSystemPassword = \).*/\1'$DB_SYS_PASS'/g" ./build.gradle
+fi
+
+if ! [ -z "${DB_URL}"]; then
+    sed -i "s/\(url=\").*\"/\1$DB_URL\"/g" ./modules/core/web/META-INF/context.xml
+    sed -i "s/\(url\">).*</\1$DB_URL</g" ./modules/core/web/META-INF/jetty-env.xml
+fi
+
 gradle buildUberJar
-mkdir /tmp/app-home
 gradle clean
+
+mkdir /tmp/app-home
