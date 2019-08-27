@@ -8,6 +8,7 @@
 #
 
 # If the 's2i-cuba' assemble script is executed with the '-h' flag, print the usage.
+
 if [[ "$1" == "-h" ]]; then
 	exec /usr/libexec/s2i/usage
 fi
@@ -24,38 +25,44 @@ cp -Rf /tmp/src/. ./
 
 echo "---> Building application from source..."
 
-if ! [ -z "${DB_HOST}"]; then
-    sed -i "s/\(host = \).*/\1'$DB_HOST'/g" ./build.gradle
+if ! [ -z "${DB_HOST}" ]; then
+  ESC_DB_HOST=$(echo $DB_HOST| sed -e 's/[\/&]/\\&/g')
+  sed -i "s/\(host = \).*/\1'$ESC_DB_HOST'/g" ./build.gradle
 fi
 
-if ! [ -z "${DB_NAME}"]; then
-    echo "Setting dbName to $DB_NAME"
-    sed -i "s/\(dbName = \).*/\1'$DB_NAME'/g" ./build.gradle
+if ! [ -z "${DB_NAME}" ]; then
+  ESC_DB_NAME=$(echo $DB_NAME| sed -e 's/[\/&]/\\&/g')
+  sed -i "s/\(dbName = \).*/\1'$ESC_DB_NAME'/g" ./build.gradle
 fi
 
-if ! [ -z "${DB_USER}"]; then
-    sed -i "s/\(dbUser = \).*/\1'$DB_USER'/g" ./build.gradle
-    sed -i "s/\(username=\).*\"/\1\"$DB_USER\"/g" ./modules/core/web/META-INF/context.xml
-    sed -i "s/\(username\">\).*</\1$DB_USER</g" ./modules/core/web/META-INF/jetty-env.xml
+if ! [ -z "${DB_USER}" ]; then
+  ESC_DB_USER=$(echo $DB_USER| sed -e 's/[\/&]/\\&/g')
+  sed -i "s/\(dbUser = \).*/\1'$ESC_DB_USER'/g" ./build.gradle
+  sed -i "s/\(username=\).*\"/\1\"$ESC_DB_USER\"/g" ./modules/core/web/META-INF/context.xml
+  sed -i "s/\(username\">\).*</\1$ESC_DB_USER</g" ./modules/core/web/META-INF/jetty-env.xml
 fi
 
-if ! [ -z "${DB_PASS}"]; then
-    sed -i "s/\(dbPassword = \).*/\1'$DB_PASS'/g" ./build.gradle
-    sed -i "s/\(password=\).*\"/\1\"$DB_PASS\"/g" ./modules/core/web/META-INF/context.xml
-    sed -i "s/\(password\">\).*</\1$DB_PASS</g" ./modules/core/web/META-INF/jetty-env.xml
+if ! [ -z "${DB_PASS}" ]; then
+  ESC_DB_PASS=$(echo $DB_PASS| sed -e 's/[\/&]/\\&/g')
+  sed -i "s/\(dbPassword = \).*/\1'$ESC_DB_PASS'/g" ./build.gradle
+  sed -i "s/\(password=\).*\"/\1\"$ESC_DB_PASS\"/g" ./modules/core/web/META-INF/context.xml
+  sed -i "s/\(password\">\).*</\1$ESC_DB_PASS</g" ./modules/core/web/META-INF/jetty-env.xml
 fi
 
-if ! [ -z "${DB_SYS_USER}"]; then
-    sed -i "s/\(oracleSystemUser = \).*/\1'$DB_SYS_USER'/g" ./build.gradle
+if ! [ -z "${DB_SYS_USER}" ]; then
+  ESC_DB_SYS_USER=$(echo $DB_SYS_USER| sed -e 's/[\/&]/\\&/g')
+  sed -i "s/\(oracleSystemUser = \).*/\1'$ESC_DB_SYS_USER'/g" ./build.gradle
 fi
 
-if ! [ -z "${DB_SYS_PASS}"]; then
-    sed -i "s/\(oracleSystemPassword = \).*/\1'$DB_SYS_PASS'/g" ./build.gradle
+if ! [ -z "${DB_SYS_PASS}" ]; then
+  ESC_DB_SYS_PASS=$(echo $DB_SYS_PASS| sed -e 's/[\/&]/\\&/g')
+  sed -i "s/\(oracleSystemPassword = \).*/\1'$ESC_DB_SYS_PASS'/g" ./build.gradle
 fi
 
-if ! [ -z "${DB_URL}"]; then
-    sed -i "s/\(url=\").*\"/\1$DB_URL\"/g" ./modules/core/web/META-INF/context.xml
-    sed -i "s/\(url\">).*</\1$DB_URL</g" ./modules/core/web/META-INF/jetty-env.xml
+if ! [ -z "${DB_URL}" ]; then
+  ESC_DB_URL=$(echo $DB_URL| sed -e 's/[\/&]/\\&/g')
+  sed -i "s/\(url=\"\).*\"/\1$ESC_DB_URL\"/g" ./modules/core/web/META-INF/context.xml
+  sed -i "s/\(url\">\).*</\1$ESC_DB_URL</g" ./modules/core/web/META-INF/jetty-env.xml
 fi
 
 gradle buildUberJar
