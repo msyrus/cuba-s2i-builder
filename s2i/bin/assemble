@@ -25,5 +25,4 @@ cp -Rf /tmp/src/. ./
 echo "---> Building application from source..."
 gradle buildUberJar
 mkdir /tmp/app-home
-cp ./build/distributions/uberJar/app.jar $HOME/
 gradle clean

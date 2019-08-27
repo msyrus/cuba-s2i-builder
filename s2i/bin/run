@@ -7,4 +7,4 @@
 #	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
 #
 
-java -Dapp.home=$HOME -jar $HOME/app.jar
+java -Dapp.home=/tmp/app-home -jar ./build/distributions/uberJar/app.jar
